@@ -18,6 +18,7 @@ public class AplikasiPenjualanBuku {
         // TODO code application logic here
         koneksi k = new koneksi();
         k.connect();
+        
     }
     
 }
