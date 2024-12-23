@@ -5,17 +5,24 @@
  */
 package aplikasipenjualanbuku;
 
+import java.io.File;
+import javax.swing.JOptionPane;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
 /**
  *
  * @author Rezqi
  */
 public class Owner extends javax.swing.JFrame {
-
+    koneksi k = new koneksi();
     /**
      * Creates new form Owner
      */
     public Owner() {
         initComponents();
+        k.connect();
     }
 
     /**
@@ -34,8 +41,14 @@ public class Owner extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        button2.setBackground(new java.awt.Color(0, 204, 204));
         button2.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         button2.setLabel("CETAK LAPORAN PENJUALAN");
+        button2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -62,11 +75,23 @@ public class Owner extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void button2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button2ActionPerformed
+        // TODO add your handling code here:
+        try {
+            File namafile = new File("src/Laporan/LaporanBuku.jasper");
+            JasperPrint jp = JasperFillManager.fillReport(namafile.getPath(), null, k.getCon());
+            JasperViewer.viewReport(jp,false);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        
+    }//GEN-LAST:event_button2ActionPerformed
 
     /**
      * @param args the command line arguments
