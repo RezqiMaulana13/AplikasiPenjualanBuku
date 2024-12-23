@@ -105,7 +105,6 @@ public class MenuBuku extends javax.swing.JFrame {
         btnInput = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
-        btnMenuTransaksi = new javax.swing.JButton();
         txtHarga = new java.awt.TextField();
         jLabel6 = new javax.swing.JLabel();
 
@@ -209,15 +208,6 @@ public class MenuBuku extends javax.swing.JFrame {
             }
         });
 
-        btnMenuTransaksi.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        btnMenuTransaksi.setText("MENU TRANSAKSI");
-        btnMenuTransaksi.setEnabled(false);
-        btnMenuTransaksi.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMenuTransaksiActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -225,13 +215,11 @@ public class MenuBuku extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnInput)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(105, 105, 105)
                 .addComponent(btnUpdate)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(100, 100, 100)
                 .addComponent(btnDelete)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnMenuTransaksi)
-                .addGap(131, 131, 131))
+                .addGap(141, 141, 141))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -240,8 +228,7 @@ public class MenuBuku extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnInput)
                     .addComponent(btnUpdate)
-                    .addComponent(btnDelete)
-                    .addComponent(btnMenuTransaksi))
+                    .addComponent(btnDelete))
                 .addContainerGap())
         );
 
@@ -358,13 +345,6 @@ public class MenuBuku extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
-    private void btnMenuTransaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuTransaksiActionPerformed
-        // TODO add your handling code here:
-        MenuTransaksi tran = new MenuTransaksi();
-        tran.setVisible(false);
-        tran.setVisible(true);
-    }//GEN-LAST:event_btnMenuTransaksiActionPerformed
-
     private void txtHargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtHargaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtHargaActionPerformed
@@ -454,7 +434,6 @@ public class MenuBuku extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnInput;
-    public javax.swing.JButton btnMenuTransaksi;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cbxStatus;
     private javax.swing.JLabel jLabel1;

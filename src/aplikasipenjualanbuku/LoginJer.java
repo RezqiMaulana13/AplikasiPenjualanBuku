@@ -151,11 +151,9 @@ public class LoginJer extends javax.swing.JFrame {
         }else{
               switch(u.id_level){
                   case 1:
-                    MenuTransaksi tran = new MenuTransaksi();
-                    tran.setVisible(true);
+                    Owner ner = new Owner();
+                    ner.setVisible(true);
                     this.setVisible(false);
-                    tran.btnCetak.setEnabled(true);
-                    tran.btnMenuBuku.setEnabled(true);
                     break;
                   case 2:
                     MenuBuku mbuk = new MenuBuku();
@@ -163,14 +161,18 @@ public class LoginJer extends javax.swing.JFrame {
                     this.setVisible(false);
                     break;
                   case 3:
-                    MenuTransaksi tran2 = new MenuTransaksi();
-                    tran2.setVisible(true);
+                    MenuTransaksi tran = new MenuTransaksi();
+                    tran.setVisible(true);
                     this.setVisible(false);
-                    tran2.btnCetak.setEnabled(false);
-                    tran2.btnInput.setEnabled(true);
-                    tran2.btnUpdate.setEnabled(true);
-                    tran2.btnDelete.setEnabled(true);
+                    tran.cbxIdbuku.setEnabled(true);
                     break;
+//                  case 4:
+//                    Menu_Masakan masak = new Menu_Masakan();
+//                    masak.setVisible(true);
+//                    this.setVisible(false);
+//                    masak.btnLogout.setEnabled(true);
+//                    break;
+
                 }  
             }
         } catch (Exception e) {

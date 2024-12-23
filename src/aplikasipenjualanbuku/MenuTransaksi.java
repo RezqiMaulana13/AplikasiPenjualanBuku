@@ -1,5 +1,13 @@
 package aplikasipenjualanbuku;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,12 +19,91 @@ package aplikasipenjualanbuku;
  * @author Rezqi
  */
 public class MenuTransaksi extends javax.swing.JFrame {
+    private DefaultTableModel  model = null;
+    private PreparedStatement stat;
+    private ResultSet rs;
+    koneksi k = new koneksi();
 
     /**
      * Creates new form MenuTransaksi
      */
     public MenuTransaksi() {
         initComponents();
+        k.connect();
+        refreshTable();
+        refreshCombo();
+    }
+    
+    class transaksi extends MenuTransaksi{
+        int id_transaksi, id_buku, harga, jumlah_beli, total_bayar;
+        String nama_pembeli, tanggal, judul_buku;
+
+        public transaksi() {
+            this.nama_pembeli = txtNamaPembeli.getText();
+            String combo = cbxIdbuku.getSelectedItem().toString();
+            String [] arr = combo.split(":");
+            this.id_buku = Integer.parseInt(arr[0]);
+            try {
+                Date date = jdcTanggal.getDate();
+                DateFormat dateformat = new SimpleDateFormat("YYYY-MM-dd");
+                this.tanggal = dateformat.format(date);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+            this.judul_buku = arr[1];
+            this.harga = Integer.parseInt(arr[2]);
+            this.jumlah_beli = Integer.parseInt(txtJumlah.getText());
+            this.total_bayar = harga * jumlah_beli;
+        }
+    }
+    public void refreshTable(){
+        model = new DefaultTableModel();
+        model.addColumn("ID Transaksi");
+        model.addColumn("Nama Pembeli");
+        model.addColumn("ID Buku");
+        model.addColumn("Tanggal");
+        model.addColumn("Judul Buku");
+        model.addColumn("Harga");
+        model.addColumn("Jumlah Beli");
+        model.addColumn("Total Bayar");
+        tblMenuTransaksi.setModel(model);
+        try {
+            this.stat = k.getCon().prepareStatement("select * from transaksi");
+            this.rs = this.stat.executeQuery();
+            while (rs.next()){
+                Object[] data={
+                    rs.getString(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5),
+                    rs.getString(6),
+                    rs.getString(7),
+                    rs.getString(8)
+                };
+                model.addRow(data);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        txtIdTransaksi.setText("");
+        txtNamaPembeli.setText("");
+        txtJumlah.setText("");
+        txtTotal.setText("");
+    }
+    
+    public void refreshCombo(){
+        try {
+            this.stat = k.getCon().prepareStatement("select * from buku "
+                    + "where status='Tersedia'");
+            this.rs = this.stat.executeQuery();
+            while (rs.next()){
+                cbxIdbuku.addItem(rs.getString("id_buku")+":"+
+                        rs.getString("judul_buku")+":"+rs.getString("harga"));
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
     }
 
     /**
@@ -39,14 +126,12 @@ public class MenuTransaksi extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
-        btnCetak = new javax.swing.JButton();
         btnInput = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblMenuTransaksi = new javax.swing.JTable();
         txtJumlah = new java.awt.TextField();
         txtTotal = new java.awt.TextField();
         jLabel6 = new javax.swing.JLabel();
-        btnMenuBuku = new javax.swing.JButton();
         cbxIdbuku = new javax.swing.JComboBox<>();
         jdcTanggal = new com.toedter.calendar.JDateChooser();
 
@@ -92,6 +177,11 @@ public class MenuTransaksi extends javax.swing.JFrame {
 
         btnUpdate.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnUpdate.setText("UPDATE");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
 
         btnDelete.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnDelete.setText("DELETE");
@@ -101,18 +191,14 @@ public class MenuTransaksi extends javax.swing.JFrame {
             }
         });
 
-        btnCetak.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        btnCetak.setText("CETAK LAPORAN");
-        btnCetak.setEnabled(false);
-        btnCetak.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCetakActionPerformed(evt);
-            }
-        });
-
         btnInput.setBackground(new java.awt.Color(204, 204, 204));
         btnInput.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnInput.setText("INPUT");
+        btnInput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInputActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -121,13 +207,11 @@ public class MenuTransaksi extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnInput)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnUpdate)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(105, 105, 105)
                 .addComponent(btnDelete)
-                .addGap(18, 18, 18)
-                .addComponent(btnCetak)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,7 +220,6 @@ public class MenuTransaksi extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnUpdate)
                     .addComponent(btnDelete)
-                    .addComponent(btnCetak)
                     .addComponent(btnInput))
                 .addContainerGap())
         );
@@ -152,6 +235,11 @@ public class MenuTransaksi extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblMenuTransaksi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblMenuTransaksiMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblMenuTransaksi);
 
         txtJumlah.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
@@ -172,13 +260,8 @@ public class MenuTransaksi extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel6.setText("Total Bayar");
 
-        btnMenuBuku.setBackground(new java.awt.Color(204, 204, 204));
-        btnMenuBuku.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        btnMenuBuku.setText("MENU BUKU");
-        btnMenuBuku.setEnabled(false);
-
         cbxIdbuku.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        cbxIdbuku.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tersedia", "Habis" }));
+        cbxIdbuku.setEnabled(false);
 
         jdcTanggal.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
 
@@ -190,7 +273,7 @@ public class MenuTransaksi extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 532, Short.MAX_VALUE)
                         .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -204,11 +287,11 @@ public class MenuTransaksi extends javax.swing.JFrame {
                             .addComponent(txtJumlah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jdcTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cbxIdbuku, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnMenuBuku)
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jdcTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(cbxIdbuku, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(153, 153, 153)))))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -229,11 +312,10 @@ public class MenuTransaksi extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(83, 83, 83)
+                .addGap(84, 84, 84)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(cbxIdbuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMenuBuku))
+                    .addComponent(cbxIdbuku, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jdcTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -250,7 +332,7 @@ public class MenuTransaksi extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addContainerGap(112, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(60, 60, 60)
@@ -277,11 +359,19 @@ public class MenuTransaksi extends javax.swing.JFrame {
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnDeleteActionPerformed
+        try {
+            transaksi tran = new transaksi();
+            tran.id_transaksi = Integer.parseInt(txtIdTransaksi.getText());
+            this.stat = k.getCon().prepareStatement("delete from transaksi "
+                    + "where id_transaksi=?");
+            this.stat.setInt(1, tran.id_transaksi);
+            this.stat.executeUpdate();  
+            refreshTable();
+        } catch (Exception e) {
+            JOptionPane.showConfirmDialog(null, e.getMessage());
+        }
 
-    private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCetakActionPerformed
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void txtJumlahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtJumlahActionPerformed
         // TODO add your handling code here:
@@ -290,6 +380,72 @@ public class MenuTransaksi extends javax.swing.JFrame {
     private void txtTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTotalActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTotalActionPerformed
+
+    private void btnInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInputActionPerformed
+        // TODO add your handling code here:
+        try {
+            transaksi tran = new transaksi();
+            txtTotal.setText(""+tran.total_bayar);
+            this.stat = k.getCon().prepareStatement("insert into transaksi values(?,?,?,?,?,?,?,?)");
+            this.stat.setInt(1, 0);
+            this.stat.setString(2, tran.nama_pembeli);
+            this.stat.setInt(3, tran.id_buku);
+            this.stat.setString(4, tran.tanggal);
+            this.stat.setString(5, tran.judul_buku);
+            this.stat.setInt(6, tran.harga);
+            this.stat.setInt(7, tran.jumlah_beli);
+            this.stat.setInt(8, tran.total_bayar);
+            int pilihan = JOptionPane.showConfirmDialog(null,
+                    "Tanggal: "+tran.tanggal+
+                            "\nNama Pembeli: "+ tran.nama_pembeli+
+                    "\nPembelian: "+tran.jumlah_beli+" "+tran.judul_buku+
+                            "\nTotal Bayar: "+tran.total_bayar+ "\n",
+                    "Tambahkan Transaksi?",
+                            JOptionPane.YES_NO_OPTION);
+            if (pilihan == JOptionPane.YES_OPTION) {
+                this.stat.executeUpdate();
+                refreshTable();
+            } else if(pilihan == JOptionPane.NO_OPTION) {
+                refreshTable();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+    }//GEN-LAST:event_btnInputActionPerformed
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+        try {
+            transaksi tran = new transaksi();
+            tran.id_transaksi = Integer.parseInt(txtIdTransaksi.getText());
+            this.stat = k.getCon().prepareStatement("update transaksi set nama_pembeli=?,"
+                    + "id_buku=?,tanggal=?,judul_buku=?,harga=?,jumlah_beli=?,total_bayar=? "
+                    + "where id_transaksi=?");
+            this.stat.setString(1, tran.nama_pembeli);
+            this.stat.setInt(2, tran.id_buku);
+            this.stat.setString(3, tran.tanggal);
+            this.stat.setString(4, tran.judul_buku);
+            this.stat.setInt(5, tran.harga);
+            this.stat.setInt(6, tran.jumlah_beli);
+            this.stat.setInt(7, tran.total_bayar);
+            this.stat.setInt(8, tran.id_transaksi);
+            this.stat.executeUpdate();
+            refreshTable();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void tblMenuTransaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMenuTransaksiMouseClicked
+        // TODO add your handling code here:
+        txtIdTransaksi.setText(model.getValueAt(tblMenuTransaksi.getSelectedRow(), 0).toString());
+        txtNamaPembeli.setText(model.getValueAt(tblMenuTransaksi.getSelectedRow(), 1).toString());
+        txtJumlah.setText(model.getValueAt(tblMenuTransaksi.getSelectedRow(), 6).toString());
+        txtTotal.setText(model.getValueAt(tblMenuTransaksi.getSelectedRow(), 7).toString());
+
+    }//GEN-LAST:event_tblMenuTransaksiMouseClicked
 
     /**
      * @param args the command line arguments
@@ -328,12 +484,10 @@ public class MenuTransaksi extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JButton btnCetak;
     public javax.swing.JButton btnDelete;
     public javax.swing.JButton btnInput;
-    public javax.swing.JButton btnMenuBuku;
     public javax.swing.JButton btnUpdate;
-    private javax.swing.JComboBox<String> cbxIdbuku;
+    public javax.swing.JComboBox<String> cbxIdbuku;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
