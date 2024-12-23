@@ -103,6 +103,7 @@ public class MenuTransaksi extends javax.swing.JFrame {
 
         btnCetak.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnCetak.setText("CETAK LAPORAN");
+        btnCetak.setEnabled(false);
         btnCetak.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCetakActionPerformed(evt);
@@ -174,6 +175,7 @@ public class MenuTransaksi extends javax.swing.JFrame {
         btnMenuBuku.setBackground(new java.awt.Color(204, 204, 204));
         btnMenuBuku.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnMenuBuku.setText("MENU BUKU");
+        btnMenuBuku.setEnabled(false);
 
         cbxIdbuku.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         cbxIdbuku.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tersedia", "Habis" }));
@@ -326,11 +328,11 @@ public class MenuTransaksi extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCetak;
-    private javax.swing.JButton btnDelete;
-    private javax.swing.JButton btnInput;
-    private javax.swing.JButton btnMenuBuku;
-    private javax.swing.JButton btnUpdate;
+    public javax.swing.JButton btnCetak;
+    public javax.swing.JButton btnDelete;
+    public javax.swing.JButton btnInput;
+    public javax.swing.JButton btnMenuBuku;
+    public javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cbxIdbuku;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

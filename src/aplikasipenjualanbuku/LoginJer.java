@@ -1,5 +1,9 @@
 package aplikasipenjualanbuku;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -10,14 +14,36 @@ package aplikasipenjualanbuku;
  *
  * @author Rezqi
  */
-public class LoginJer extends javax.swing.JFrame {
 
+
+public class LoginJer extends javax.swing.JFrame {
+    private ResultSet rs;
+    private PreparedStatement stat;
+    koneksi k = new koneksi();
+  
     /**
      * Creates new form LoginJer
      */
+  
     public LoginJer() {
         initComponents();
+        k.connect();
+}
+
+    class user {
+        int id_user, id_level;
+        String username, password, nama_user;
+        
+        public user() {
+            this.id_user = 0;
+            this.username = txtUsername.getText();
+            this.password = txtPassword.getText();
+            this.nama_user = "";
+            this.id_level = 0;
+            
+        }
     }
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -61,6 +87,11 @@ public class LoginJer extends javax.swing.JFrame {
         btnLogin.setBackground(new java.awt.Color(204, 204, 204));
         btnLogin.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnLogin.setText("LOGIN");
+        btnLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoginActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -104,6 +135,49 @@ public class LoginJer extends javax.swing.JFrame {
     private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsernameActionPerformed
+
+    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+        // TODO add your handling code here:
+        user u = new user();
+        try {
+            this.stat = k.getCon().prepareStatement("select * from user where " 
+            + "username = '"+u.username+"' and password = '"+u.password+"';");
+            this.rs = this.stat.executeQuery();
+            while (rs.next()) {
+                u.id_level = rs.getInt("id_level");  
+            }
+            if(u.id_level == 0){
+                JOptionPane.showMessageDialog(null, "Akun Tidak Ditemukan");
+        }else{
+              switch(u.id_level){
+                  case 1:
+                    MenuTransaksi tran = new MenuTransaksi();
+                    tran.setVisible(true);
+                    this.setVisible(false);
+                    tran.btnCetak.setEnabled(true);
+                    tran.btnMenuBuku.setEnabled(true);
+                    break;
+                  case 2:
+                    MenuBuku mbuk = new MenuBuku();
+                    mbuk.setVisible(true);
+                    this.setVisible(false);
+                    break;
+                  case 3:
+                    MenuTransaksi tran2 = new MenuTransaksi();
+                    tran2.setVisible(true);
+                    this.setVisible(false);
+                    tran2.btnCetak.setEnabled(false);
+                    tran2.btnInput.setEnabled(true);
+                    tran2.btnUpdate.setEnabled(true);
+                    tran2.btnDelete.setEnabled(true);
+                    break;
+                }  
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+                
+    }//GEN-LAST:event_btnLoginActionPerformed
 
     /**
      * @param args the command line arguments

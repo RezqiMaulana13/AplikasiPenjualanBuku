@@ -136,6 +136,7 @@ public class MenuBuku extends javax.swing.JFrame {
 
         btnMenuTransaksi.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnMenuTransaksi.setText("MENU TRANSAKSI");
+        btnMenuTransaksi.setEnabled(false);
         btnMenuTransaksi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnMenuTransaksiActionPerformed(evt);
@@ -200,7 +201,7 @@ public class MenuBuku extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtIdBuku, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtJudul, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 527, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 527, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -321,7 +322,7 @@ public class MenuBuku extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnInput;
-    private javax.swing.JButton btnMenuTransaksi;
+    public javax.swing.JButton btnMenuTransaksi;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cbxStatus;
     private javax.swing.JLabel jLabel1;
