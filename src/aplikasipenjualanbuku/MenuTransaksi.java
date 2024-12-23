@@ -262,6 +262,11 @@ public class MenuTransaksi extends javax.swing.JFrame {
 
         cbxIdbuku.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         cbxIdbuku.setEnabled(false);
+        cbxIdbuku.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxIdbukuActionPerformed(evt);
+            }
+        });
 
         jdcTanggal.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
 
@@ -446,6 +451,10 @@ public class MenuTransaksi extends javax.swing.JFrame {
         txtTotal.setText(model.getValueAt(tblMenuTransaksi.getSelectedRow(), 7).toString());
 
     }//GEN-LAST:event_tblMenuTransaksiMouseClicked
+
+    private void cbxIdbukuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxIdbukuActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbxIdbukuActionPerformed
 
     /**
      * @param args the command line arguments
