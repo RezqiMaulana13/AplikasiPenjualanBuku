@@ -1,5 +1,10 @@
 package aplikasipenjualanbuku;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,13 +16,68 @@ package aplikasipenjualanbuku;
  * @author Rezqi
  */
 public class MenuBuku extends javax.swing.JFrame {
+    private DefaultTableModel model = null;
+    private PreparedStatement stat;
+    private ResultSet rs;
+    koneksi k = new koneksi();
+    
+    public MenuBuku() {
+        initComponents();
+        k.connect();
+        refreshTable();
+    }
+    
+    class buku extends MenuBuku{
+        int id_buku, harga;
+        String judul_buku,penulis,penerbit, status;
+
+        public buku() {
+            this.judul_buku = txtJudul.getText();
+            this.penulis = txtPenulis.getText();
+            this.penerbit = txtPenerbit.getText();
+            this.harga = Integer.parseInt(txtHarga.getText());
+            this.status = cbxStatus.getSelectedItem().toString();
+        }
+    }
+    
+    public void refreshTable(){
+        model = new DefaultTableModel();
+        model.addColumn("ID Buku");
+        model.addColumn("Judul Buku");
+        model.addColumn("Penulis");
+        model.addColumn("Penerbit");
+        model.addColumn("Harga");
+        model.addColumn("Status");
+        tblMenuBuku.setModel(model);
+        
+        try {
+            this.stat = k.getCon().prepareStatement("select * from buku");
+            this.rs = this.stat.executeQuery();
+            while (rs.next()) {                
+                Object[] data = {
+                  rs.getInt("id_buku"),
+                  rs.getString("judul_buku"),
+                  rs.getString("penulis"),
+                  rs.getString("penerbit"),
+                  rs.getInt("harga"),
+                  rs.getString("status")
+                };
+                model.addRow(data);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        txtIdBuku.setText("");
+        txtJudul.setText("");
+        txtPenulis.setText("");
+        txtPenerbit.setText("");
+        txtHarga.setText("");
+    }
 
     /**
      * Creates new form MenuBuku
      */
-    public MenuBuku() {
-        initComponents();
-    }
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -114,6 +174,11 @@ public class MenuBuku extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblMenuBuku.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblMenuBukuMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblMenuBuku);
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
@@ -122,9 +187,19 @@ public class MenuBuku extends javax.swing.JFrame {
         btnInput.setBackground(new java.awt.Color(204, 204, 204));
         btnInput.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnInput.setText("INPUT");
+        btnInput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInputActionPerformed(evt);
+            }
+        });
 
         btnUpdate.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnUpdate.setText("UPDATE");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
 
         btnDelete.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnDelete.setText("DELETE");
@@ -273,15 +348,72 @@ public class MenuBuku extends javax.swing.JFrame {
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
+        try {
+            this.stat = k.getCon().prepareStatement("delete from buku where id_buku=?");
+            stat.setInt(1, Integer.parseInt(txtIdBuku.getText()));
+            stat.executeUpdate();
+            refreshTable();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnMenuTransaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenuTransaksiActionPerformed
         // TODO add your handling code here:
+        MenuTransaksi tran = new MenuTransaksi();
+        tran.setVisible(false);
+        tran.setVisible(true);
     }//GEN-LAST:event_btnMenuTransaksiActionPerformed
 
     private void txtHargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtHargaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtHargaActionPerformed
+
+    private void btnInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInputActionPerformed
+        // TODO add your handling code here:
+        try {
+            buku m = new buku();
+            this.stat = k.getCon().prepareStatement("insert into buku values(?,?,?,?,?,?)");
+            stat.setInt(1, 0);
+            stat.setString(2, m.judul_buku);
+            stat.setString(3, m.penulis);
+            stat.setString(4, m.penerbit);
+            stat.setInt(5, m.harga);
+            stat.setString(6, m.status);
+            stat.executeUpdate();
+            refreshTable();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }//GEN-LAST:event_btnInputActionPerformed
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+        try {
+            buku m = new buku();
+            this.stat = k.getCon().prepareStatement("update buku set judul_buku=?,"
+                    + "penulis=?,penerbit=?,harga=?,status=? where id_buku=?");
+            stat.setString(1, m.judul_buku);
+            stat.setString(2, m.penulis);
+            stat.setString(3, m.penerbit);
+            stat.setInt(4, m.harga);
+            stat.setString(5, m.status);
+            stat.setInt(6, Integer.parseInt(txtIdBuku.getText()));
+            stat.executeUpdate();
+            refreshTable();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void tblMenuBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMenuBukuMouseClicked
+        // TODO add your handling code here:
+        txtIdBuku.setText(model.getValueAt(tblMenuBuku.getSelectedRow(), 0).toString());
+        txtJudul.setText(model.getValueAt(tblMenuBuku.getSelectedRow(), 1).toString());
+        txtPenulis.setText(model.getValueAt(tblMenuBuku.getSelectedRow(), 2).toString());
+        txtPenerbit.setText(model.getValueAt(tblMenuBuku.getSelectedRow(), 3).toString());
+        txtHarga.setText(model.getValueAt(tblMenuBuku.getSelectedRow(), 4).toString());
+    }//GEN-LAST:event_tblMenuBukuMouseClicked
 
     /**
      * @param args the command line arguments
